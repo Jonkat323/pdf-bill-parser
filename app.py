@@ -68,26 +68,19 @@ Bill text:
 # ---------- Utility Functions ----------
 def extract_text_from_pdf(uploaded_file):
     text = ""
-    #try:
-    #   with fitz.open(stream=uploaded_file.read(), filetype="pdf") as doc:
-    #        for page in doc:
-    #            page_text = page.get_text().strip()
-    #            if page_text:
-    #                text += page_text + "\n"
-    #            else:
-    #                pix = page.get_pixmap(dpi=300)
-    #                image = Image.open(io.BytesIO(pix.tobytes("png")))
-    #                text += pytesseract.image_to_string(image) + "\n"
-    #except Exception as e:
-    #    return "", f"Failed to extract text: {e}"
-    #return text.strip(), None
     try:
-    # Try PyMuPDF or PyPDF2 here
-    if not extracted_text.strip():
-        raise ValueError("No extractable text found in PDF")
-
-except Exception:
-    st.warning("This PDF appears to be scanned and needs OCR, which isn’t supported on this server.")
+       with fitz.open(stream=uploaded_file.read(), filetype="pdf") as doc:
+            for page in doc:
+                page_text = page.get_text().strip()
+                if page_text:
+                    text += page_text + "\n"
+                else:
+                    pix = page.get_pixmap(dpi=300)
+                    image = Image.open(io.BytesIO(pix.tobytes("png")))
+                    text += pytesseract.image_to_string(image) + "\n"
+    except Exception as e:
+        return "", f"Failed to extract text: {e}"
+    return text.strip(), None
 
 def parse_with_gpt(text):
     prompt = build_prompt(text)
